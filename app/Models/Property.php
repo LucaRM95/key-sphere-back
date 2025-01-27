@@ -11,8 +11,20 @@ class Property extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'address', 'description', 'lat', 'lng', 'images', 'type', 
-        'status', 'is_active', 'price', 'area', 'beds', 'baths', 'user_id'
+        'title',
+        'address',
+        'description',
+        'lat',
+        'lng',
+        'images',
+        'type',
+        'status',
+        'is_active',
+        'price',
+        'area',
+        'beds',
+        'baths',
+        'user_id'
     ];
 
     protected $casts = [
@@ -27,15 +39,15 @@ class Property extends Model
     ];
 
     protected $keyType = 'string';
-    
+
     // Disable auto-incrementing
     public $incrementing = false;
-    
+
     // Automatically generate UUID for new records
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($model) {
             if (!$model->id) {
                 $model->id = (string) Str::uuid(); // Generate UUID if not set
@@ -46,5 +58,10 @@ class Property extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites');
     }
 }

@@ -28,6 +28,7 @@ class User extends Authenticatable implements JWTSubject
         'roles' => 'array',
         'email_verified_at' => 'datetime',
         'is_active' => 'boolean',
+        'favorites' => 'array',
     ];
 
     protected $keyType = 'string';
@@ -57,6 +58,11 @@ class User extends Authenticatable implements JWTSubject
     public function properties()
     {
         return $this->hasMany(Property::class);
+    }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(Property::class, 'favorites');
     }
 
     public function getJWTIdentifier()

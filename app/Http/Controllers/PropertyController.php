@@ -119,7 +119,7 @@ class PropertyController extends Controller
             if (!$property) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Property not found'
+                    'message' => 'Property not found.'
                 ], 404);
             }
 
