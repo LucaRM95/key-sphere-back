@@ -76,12 +76,28 @@ class AuthController extends Controller
 
         $token = JWTAuth::fromUser($user);
 
-        return response()->json([
-            'success' => true,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'expires_in' => env('JWT_TTL', 60),
-        ], 200);
+        return response()
+            ->json([
+                'success' => true,
+                'message' => 'Login successful',
+            ], 200)
+            ->cookie('access_token', $token, 60 * 24 * 7, '/', null, false, true);
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $user = $request->user();
+        $newToken = $user->createToken('authToken')->plainTextToken;
+
+        return response()->json(['message' => 'Token refreshed'])->cookie(
+            'access_token',
+            $newToken,
+            60 * 24 * 7,
+            null,
+            null,
+            true,
+            true
+        );
     }
 
     public function me()
@@ -97,10 +113,10 @@ class AuthController extends Controller
         return response()->json(compact('user'));
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        JWTAuth::invalidate(JWTAuth::getToken());
+        $request->user()->tokens()->delete();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Logged out'])->withoutCookie('access_token');
     }
 }
