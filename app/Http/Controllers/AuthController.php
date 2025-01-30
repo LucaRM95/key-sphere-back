@@ -81,7 +81,8 @@ class AuthController extends Controller
                 'success' => true,
                 'message' => 'Login successful',
             ], 200)
-            ->cookie('access_token', $token, 60 * 24 * 7, '/', null, false, true);
+            ->cookie('access_token', $token, 60 * 24 * 7, '/', null, false, true)
+            ->header('Access-Control-Allow-Credentials', 'true');
     }
 
     public function refreshToken(Request $request)
