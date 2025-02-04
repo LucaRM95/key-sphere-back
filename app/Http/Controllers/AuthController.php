@@ -79,10 +79,8 @@ class AuthController extends Controller
         return response()
             ->json([
                 'success' => true,
-                'message' => 'Login successful',
-            ], 200)
-            ->withCookie(cookie('access_token', $token, 60 * 24 * 7, '/', null, false, true))
-            ->header('Access-Control-Allow-Credentials', 'true');
+                'access_token' => $token,
+            ], 200);
     }
 
     public function refreshToken(Request $request)
@@ -90,15 +88,7 @@ class AuthController extends Controller
         $user = $request->user();
         $newToken = $user->createToken('authToken')->plainTextToken;
 
-        return response()->json(['message' => 'Token refreshed'])->cookie(
-            'access_token',
-            $newToken,
-            60 * 24 * 7,
-            null,
-            null,
-            true,
-            true
-        );
+        return response()->json(['success' => true, 'refresh_token' => $newToken]);
     }
 
     public function me()
@@ -118,6 +108,6 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
 
-        return response()->json(['message' => 'Logged out'])->withoutCookie('access_token');
+        return response()->json(['success' => true, 'message' => 'Logged out']);
     }
 }
