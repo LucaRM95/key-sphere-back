@@ -10,10 +10,24 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PropertyController extends Controller
 {
-    public function get_properties(): JsonResponse
+    public function get_properties(Request $request): JsonResponse
     {
         try {
-            $properties = Property::all();
+            $query = Property::query();
+
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
+
+            if ($request->has('type')) {
+                $query->where('type', $request->type);
+            }
+
+            if ($request->has('min_price') && $request->has('max_price')) {
+                $query->whereBetween('price', [$request->min_price, $request->max_price]);
+            }
+
+            $properties = $query->get();
 
             return response()->json([
                 'success' => true,
@@ -143,11 +157,9 @@ class PropertyController extends Controller
             $message = '';
             $property = Property::find($id);
 
-            if($property->is_active)
-            {
+            if ($property->is_active) {
                 $this->$message = 'Property has been unactivated.';
-            } else 
-            {
+            } else {
                 $this->$message = 'Property has been activated.';
             }
 
